@@ -1,5 +1,6 @@
 package com.example.swipeassignment.adapter.rv
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
@@ -9,14 +10,26 @@ import com.example.swipeassignment.R
 import com.example.swipeassignment.data.models.ProductDataDataModel
 import com.example.swipeassignment.databinding.ProductRvItemBinding
 
-class ProductListRVAdapter(private val productList: List<ProductDataDataModel>):
+class ProductListRVAdapter(private val rootProductList: List<ProductDataDataModel>):
     RecyclerView.Adapter<ProductListRVAdapter.ProductListItemViewHolder>() {
 
+    private val productList = mutableListOf<ProductDataDataModel>()
+
+    init {
+        productList.addAll(rootProductList)
+    }
     inner class ProductListItemViewHolder(binding: ProductRvItemBinding): RecyclerView.ViewHolder(binding.root) {
         val productNameTV = binding.productNameTv
         val productPriceTV = binding.productPriceTv
         val productTaxTV = binding.productTaxTv
         val productImageIV = binding.productImageIv
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateList(searchQuery: String) {
+        productList.clear()
+        productList.addAll(rootProductList.filter { (it.productName + it.productType).contains(searchQuery, true) })
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductListItemViewHolder {

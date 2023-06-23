@@ -5,7 +5,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TimePicker
 import android.widget.Toast
+import androidx.core.widget.addTextChangedListener
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,6 +19,7 @@ import com.example.swipeassignment.databinding.FragmentAddProductBinding
 import com.example.swipeassignment.databinding.FragmentProductListBinding
 import com.example.swipeassignment.viewmodel.ProductListFragmentViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 
 @AndroidEntryPoint
@@ -38,14 +42,21 @@ class ProductListFragment : Fragment() {
         viewModel.productDataLiveData.observe(this) {
             when(it) {
                 is UIStatus.Success -> {
+                    val rvAdapter = ProductListRVAdapter(it.data)
                     binding.productListRv.apply {
                         layoutManager = LinearLayoutManager(activity).apply {
                             orientation = LinearLayoutManager.VERTICAL
                         }
-                        adapter = ProductListRVAdapter(it.data)
+                        adapter = rvAdapter
                     }
                     binding.addProductBt.setOnClickListener {
                         findNavController().navigate(ProductListFragmentDirections.actionProductListFragmentToAddProductFragment())
+                    }
+                    binding.productSearchEt.doAfterTextChanged { search ->
+                        if (!(search.isNullOrBlank())) {
+                            val query = search.toString()
+                            rvAdapter.updateList(query)
+                        }
                     }
                     binding.productListRv.visibility = View.VISIBLE
                     binding.addProductBt.visibility = View.VISIBLE

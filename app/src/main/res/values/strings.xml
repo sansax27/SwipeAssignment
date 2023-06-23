@@ -16,5 +16,6 @@
     <string name="give_image_permission_string">Please give image permissions.</string>
     <string name="add_product_string">Add Product</string>
     <string name="please_enter_product_data_string">Please enter product name, price and tax.</string>
+    <string name="search_product_string">Search Product</string>
 
 </resources>
